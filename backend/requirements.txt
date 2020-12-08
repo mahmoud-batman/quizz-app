@@ -1,0 +1,10 @@
+# between minor version that have no breaking changes
+Django
+djangorestframework
+psycopg2
+Pillow
+flake8
+django-allauth
+django-rest-auth
+django-cors-headers
+gunicorn
