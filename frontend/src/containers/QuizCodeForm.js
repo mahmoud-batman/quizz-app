@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { Form, Button, Icon, Segment } from "semantic-ui-react";
-import { Link, Redirect } from "react-router-dom";
+import { Form, Button, Icon } from "semantic-ui-react";
+import { Redirect } from "react-router-dom";
 import { getQuiz } from "../store/actions/quizTaker";
 import { connect } from "react-redux";
 
@@ -26,9 +26,9 @@ class QuizCodeForm extends Component {
   };
 
   render() {
-    const { isTeacher, quiz } = this.props;
-
-    if (isTeacher == "true") {
+    const { isTeacher } = this.props;
+    // console.log(quiz);
+    if (isTeacher === "true") {
       return <Redirect to="/" />;
     }
 

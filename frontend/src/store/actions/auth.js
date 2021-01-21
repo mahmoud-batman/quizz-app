@@ -94,6 +94,7 @@ export const authSignup = (
 ) => {
   return (dispatch) => {
     dispatch(authStart());
+    // console.log(first_name, second_name, password, user_id, is_teacher);
     axios
       .post(`${authurl}/signup/`, {
         user_id: user_id,
@@ -120,6 +121,7 @@ export const authSignup = (
         dispatch(authSuccess(token, full_name, user_id, id, is_teacher));
       })
       .catch((error) => {
+        console.log(error);
         dispatch(authFail(error));
       });
   };

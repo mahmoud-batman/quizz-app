@@ -18,11 +18,11 @@ class UsersTable extends Component {
 
   render() {
     const { users, userType } = this.props;
-    const { activePage } = this.state;
+    // const { activePage } = this.state;
 
     return (
       <>
-        {users.length != 0 ? (
+        {users.length !== 0 ? (
           <>
             <Table celled color="blue" selectable>
               <Table.Header>

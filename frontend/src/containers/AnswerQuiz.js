@@ -1,78 +1,183 @@
 import React, { Component } from "react";
 import {
-  Form,
   Grid,
   Button,
-  Icon,
-  Header,
   Segment,
   Container,
   Label,
   Radio,
   Progress,
+  Icon,
 } from "semantic-ui-react";
-import { Link, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
-import { getQuiz } from "../store/actions/teacher";
+// import { getQuiz } from "../store/actions/teacher";
 import { createResponse } from "../store/actions/quizTaker";
 import ModalForm from "./Modal";
-import { Detector, Offline, Online } from "react-detect-offline";
-import { logout, checkAuth } from "../store/actions/auth";
-import { quizurl } from "../constants";
-import axios from "axios";
+// import { Detector, Offline, Online } from "react-detect-offline";
+import { logout } from "../store/actions/auth";
+import { localhost, quizurl } from "../constants";
+import Parser from "html-react-parser";
+import { Detector } from "react-detect-offline";
 
-function secondsToTime(e) {
-  var h = Math.floor(e / 3600)
-      .toString()
-      .padStart(2, "0"),
-    m = Math.floor((e % 3600) / 60)
-      .toString()
-      .padStart(2, "0"),
-    s = Math.floor(e % 60)
-      .toString()
-      .padStart(2, "0");
+// import axios from "axios";
+// import { Typography } from "antd";
+// const { Text } = Typography;
 
-  return h + ":" + m + ":" + s;
-}
+// function secondsToTime(e) {
+//   var h = Math.floor(e / 3600)
+//       .toString()
+//       .padStart(2, "0"),
+//     m = Math.floor((e % 3600) / 60)
+//       .toString()
+//       .padStart(2, "0"),
+//     s = Math.floor(e % 60)
+//       .toString()
+//       .padStart(2, "0");
+
+//   return h + ":" + m + ":" + s;
+// }
+
+// const TIME = 20;
 
 class StartQuiz extends Component {
   _isMounted = false;
   constructor(props) {
     super(props);
     this.interval = "";
+    // this.listeningInterval = "";
   }
 
   state = {
     index: 0,
     online: false,
-    questions: [{}],
+    questions: [],
     modal: false,
     disabled: true,
     time: 0,
+    listeningTime: 0,
+    currentQuestion: {},
+    playing: false,
   };
-  
-  //    setInterval(() => {
-  //     if (this.state.time > 1) {
-  //       this.setState({ time: this.state.time - 1 });
-  //     }
-  // }, 1000);
 
   componentDidMount() {
-    const { quiz } = this.props;
+    const { quiz, questions } = this.props;
     this._isMounted = true;
-    this.setState({ time: quiz.time * 60 });
-    setTimeout(this.handleSubmit, quiz.time * 60 * 1000);
 
+    let _questions = questions.map((question) => {
+      return { question: question.id };
+    });
+    this.setState({
+      time: quiz.time * 60,
+      questions: _questions,
+      currentQuestion: questions[this.state.index],
+    });
+
+    if (questions[this.state.index] != null) {
+      if (questions[this.state.index].file != null) {
+        this.setState({ listeningTime: questions[this.state.index].time });
+      }
+    }
+
+    /**
+     * quiz time out
+     */
     this.interval = setInterval(() => {
+      if (
+        document.getElementById("myAudio") != null &&
+        document.getElementById("myAudio").readyState
+      ) {
+      }
+
       if (this.state.time > 1) {
-        this.setState({ time: this.state.time - 1 });
+        // this.setState({ time: this.state.time - 1 });
+        if (
+          this.state.currentQuestion != null &&
+          this.state.currentQuestion.file != null &&
+          //document.getElementById("myAudio") != null &&
+          //  document.getElementById("myAudio").paused
+          //  document.getElementById("myAudio").readyState
+          document.getElementById("myAudio") != null &&
+          document.getElementById("myAudio").readyState
+        ) {
+          this.setState({ time: this.state.time - 1 });
+          if (this.state.listeningTime > 1) {
+            this.setState({
+              listeningTime: this.state.listeningTime - 1,
+            });
+          } else {
+            if (this.state.index + 1 === questions.length) {
+              this.handleSubmit();
+              clearInterval(this.interval);
+            } else {
+              this.setState({
+                index: this.state.index + 1,
+                currentQuestion: questions[this.state.index + 1],
+                listeningTime: questions[this.state.index + 1].time,
+              });
+            }
+
+            // if (
+            //   questions[this.state.index + 1] != null &&
+            //   questions[this.state.index + 1].file != null
+            // ) {
+            //   this.setState({
+            //     listeningTime: questions[this.state.index + 1].time,
+            //   });
+            // }
+          }
+        } else {
+          this.setState({ time: this.state.time - 1 });
+        }
       } else {
+        this.handleSubmit();
         clearInterval(this.interval);
       }
     }, 1000);
 
-    // setTimeout(this.handleSubmit, quiz.time * 60 * 1000);
-    const { slug } = this.props.match.params;
+    /**
+     * listening questions
+     */
+
+    /**
+     * if current question is file : - setListeningInterval and setState listeningTime
+     *
+     */
+
+    // if (this.state.index <= _questions.length) {
+    //   let question = questions[this.state.index];
+    //   if (question.file != null) {
+    //     this.setState({ listeningTime: question.time });
+    //     this.listeningInterval = setInterval(() => {
+    //       if (this.state.listeningTime > 1) {
+    //         this.setState({ listeningTime: this.state.listeningTime - 1 });
+    //       } else {
+    //         this.setState({
+    //           listeningTime: question.time,
+    //           index: this.state.index + 1,
+    //         });
+    //       }
+    //     }, 1000);
+    //   }
+    // }
+
+    // if (questions[0].file != null) {
+    //   this.setState({ listeningTime: questions[0].time });
+    // }
+
+    // this.listeningInterval = setInterval(() => {
+    //   let question = questions[this.state.index];
+    //   if (question && question.file) {
+    //     if (this.state.listeningTime > 1) {
+    //       this.setState({ listeningTime: this.state.listeningTime - 1 });
+    //     } else {
+    //       this.setState({
+    //         listeningTime: questions[this.state.index + 1].time,
+    //         index: this.state.index + 1,
+    //       });
+    //     }
+    //   }
+    // }, 1000);
   }
 
   handleRadioChange = (index, questionId, answerId) => {
@@ -93,6 +198,7 @@ class StartQuiz extends Component {
     this.props.onCreateResponse(quizTaker.id, questions);
     this.setState({ modal: false });
     clearInterval(this.interval);
+    // clearInterval(this.listeningInterval);
 
     if (quiz.training) {
       return this.props.history.push(`/student/result/`);
@@ -120,15 +226,20 @@ class StartQuiz extends Component {
   };
 
   render() {
-    const { isTeacher, questions, isAuthenticated, quiz } = this.props;
-    if (isTeacher == "true" || !isAuthenticated) {
+    const { isTeacher, questions, isAuthenticated } = this.props;
+
+    if (isTeacher === "true" || !isAuthenticated) {
       return <Redirect to="/" />;
     }
 
     return (
       <>
-        {this.secondsToTime(this.state.time)}
-        {/* <Detector
+        {window.addEventListener("beforeunload", function (e) {
+          e.preventDefault();
+          e.returnValue = "";
+        })}
+
+        <Detector
           onChange={(_) => {
             fetch(`${quizurl}`, {
               mode: "no-cors",
@@ -137,14 +248,14 @@ class StartQuiz extends Component {
                 console.log("CONNECTED TO INTERNET");
               })
               .catch((err) => {
+                console.log("err", err);
                 this.props.logout();
                 this.props.history.push("/");
-                
               });
           }}
           render={({ online }) => <></>}
-        /> */}
-        {questions.map(
+        />
+        {/* {questions.map(
           (question, index) =>
             index == this.state.index && (
               <Segment key={question.id}>
@@ -152,6 +263,9 @@ class StartQuiz extends Component {
                   percent={((this.state.index + 1) / questions.length) * 100}
                   indicating
                 />
+                <Text type="success" strong>
+                  {question.file != null && this.state.listeningTime}{" "}
+                </Text>
                 <Container textAlign="left">
                   <Label circular color="grey" key="grey">
                     {index + 1}
@@ -159,7 +273,17 @@ class StartQuiz extends Component {
                 </Container>
                 <Header as="h3" textAlign="center">
                   {question.text}
-                </Header>
+                </Header>{" "}
+                {question.file && (
+                  <audio
+                    autoPlay
+                  >
+                    <source
+                      src={`${localhost}/${question.file}`}
+                      type="audio/mpeg"
+                    />
+                  </audio>
+                )}
                 <Grid container columns={2} stackable>
                   {question.answers.map((answer) => (
                     <Grid.Column key={answer.id}>
@@ -188,19 +312,171 @@ class StartQuiz extends Component {
                 </Grid>
               </Segment>
             )
+        )} */}
+        {this.state.currentQuestion != null && (
+          <Segment key={this.state.currentQuestion.id}>
+            <Label
+              color="black"
+              // color="violet"
+              // style={{ color: "#1890ff" }}
+              // icon="time"
+              attached="top"
+            >
+              <Icon name="time" />
+              {this.secondsToTime(this.state.time)} sec
+            </Label>
+            <Progress
+              size="tiny"
+              percent={(this.state.time / (this.props.quiz.time * 60)) * 100}
+              indicating
+            />
+            {/* (this.state.time / (this.props.quiz.time * 60)) * 100) */}
+            {/* <Progress
+              percent={((this.state.index + 1) / questions.length) * 100}
+              indicating
+            /> */}
+            {/* <Text type="success" strong>
+              {this.state.currentQuestion.file != null &&
+                this.state.listeningTime}{" "}
+            </Text> */}
+            <Container textAlign="left">
+              <Label circular color="grey" key="grey">
+                {this.state.index + 1}
+              </Label>{" "}
+              {this.state.currentQuestion.file && (
+                <Label ribbon="right" color="blue">
+                  <Icon name="time" />
+                  {this.state.currentQuestion.file != null &&
+                    this.state.listeningTime}{" "}
+                  <Label.Detail>Sec</Label.Detail>
+                </Label>
+              )}
+            </Container>
+            {this.state.currentQuestion.file && (
+              <>
+                <Icon size="big" name="sound" />
+                <audio autoPlay id="myAudio" preload="auto">
+                  <source
+                    src={`${localhost}/${this.state.currentQuestion.file}`}
+                    type="audio/mpeg"
+                  />
+                </audio>
+              </>
+            )}
+            <Container>
+              {this.state.currentQuestion.text &&
+                Parser(this.state.currentQuestion.text)}
+            </Container>{" "}
+            <Grid container columns={2} stackable>
+              {this.state.currentQuestion.answers != null &&
+                this.state.currentQuestion.answers.map((answer) => (
+                  <Grid.Column key={answer.id}>
+                    <Segment>
+                      <Container>
+                        <Radio
+                          floated="left"
+                          label={answer.text}
+                          name="radioGroup"
+                          checked={
+                            this.state.index in this.state.questions &&
+                            this.state.questions[this.state.index].answer ===
+                              answer.id
+                          }
+                          onChange={(_) =>
+                            this.handleRadioChange(
+                              this.state.index,
+                              this.state.currentQuestion.id,
+                              answer.id
+                            )
+                          }
+                        />
+                      </Container>
+                    </Segment>
+                  </Grid.Column>
+                ))}
+            </Grid>
+          </Segment>
         )}
-
+        {/* <Segment key={this.state.currentQuestion.id}>
+          <Progress
+            percent={((this.state.index + 1) / questions.length) * 100}
+            indicating
+          />
+          <Text type="success" strong>
+            {this.state.currentQuestion.file != null &&
+              this.state.listeningTime}{" "}
+          </Text>
+          <Container textAlign="left">
+            <Label circular color="grey" key="grey">
+              {this.state.index + 1}
+            </Label>{" "}
+          </Container>
+          <Header as="h3" textAlign="center">
+            {this.state.currentQuestion.text}
+          </Header>{" "}
+          {this.state.currentQuestion.file && (
+            <audio autoPlay>
+              <source
+                src={`${localhost}/${this.state.currentQuestion.file}`}
+                type="audio/mpeg"
+              />
+            </audio>
+          )}
+          <Grid container columns={2} stackable>
+            {this.state.currentQuestion.answers.map((answer) => (
+              <Grid.Column key={answer.id}>
+                <Segment>
+                  <Container>
+                    <Radio
+                      floated="left"
+                      label={answer.text}
+                      name="radioGroup"
+                      checked={
+                        index in this.state.questions &&
+                        this.state.currentQuestion.answer == answer.id
+                      }
+                      onChange={(_) =>
+                        this.handleRadioChange(
+                          this.state.index,
+                          this.state.currentQuestion.id,
+                          answer.id
+                        )
+                      }
+                    />
+                  </Container>
+                </Segment>
+              </Grid.Column>
+            ))}
+          </Grid>
+        </Segment> */}
         <Container>
           {this.state.index > 0 && (
             <Button
               icon="arrow alternate circle left"
               // labelPosition="left"
               // label="Next"
-              onClick={() => this.setState({ index: this.state.index - 1 })}
+              onClick={() => {
+                this.setState({
+                  index: this.state.index - 1,
+                  currentQuestion: questions[this.state.index - 1],
+                  // listeningTime: questions[this.state.index - 1].time,
+                });
+
+                if (this.state.currentQuestion.file != null) {
+                  this.setState({
+                    listeningTime: questions[this.state.index - 1].time,
+                  });
+                }
+              }}
               floated="left"
+              disabled={
+                this.state.currentQuestion.file != null ||
+                // questions[this.state.index].file != null ||
+                questions[this.state.index - 1].file != null
+              }
             />
           )}
-          {this.state.index == questions.length - 1 ? (
+          {this.state.index === questions.length - 1 ? (
             <Button
               floated="right"
               onClick={(_) => this.setState({ modal: true })}
@@ -212,8 +488,18 @@ class StartQuiz extends Component {
               icon="arrow alternate circle right"
               // labelPosition="left"
               // label="Next"
-              // disabled={this.state.disabled}
-              onClick={() => this.setState({ index: this.state.index + 1 })}
+              // disabled={questions[this.state.index].file != null}
+              onClick={() => {
+                this.setState({
+                  index: this.state.index + 1,
+                  currentQuestion: questions[this.state.index + 1],
+                });
+                if (questions[this.state.index + 1].file != null) {
+                  this.setState({
+                    listeningTime: questions[this.state.index + 1].time,
+                  });
+                }
+              }}
               floated="right"
             />
           )}

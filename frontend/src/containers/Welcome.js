@@ -9,7 +9,7 @@ import {
   Grid,
 } from "semantic-ui-react";
 import { connect } from "react-redux";
-import QuizCodeForm from "../containers/QuizCodeForm";
+// import QuizCodeForm from "../containers/QuizCodeForm";
 
 class WelcomePage extends Component {
   render() {
@@ -56,9 +56,9 @@ class WelcomePage extends Component {
                   <Button secondary>Sign Up</Button>
                 </Link>
               </>
-            ) : is_Teacher == "true" ? (
+            ) : is_Teacher === "true" ? (
               <Redirect to={"teacher/quizes/"}></Redirect>
-            ) : is_staff == "true" ? (
+            ) : is_staff === "true" ? (
               <Redirect to={"teacher/users/"}></Redirect>
             ) : (
               <Redirect to={"student"}></Redirect>

@@ -22,15 +22,16 @@ RUN apk del .tmp-build-deps
 
 COPY . .
 
-RUN mkdir -p /vol/web/media
-RUN mkdir -p /vol/web/static
-RUN adduser -D user
-# change the owner of the dirs.
-RUN chown -R user:user /vol/
-# the owner only have all priviliges (user) 
-RUN chmod -R 755 /vol/web
-# change user 
-USER user
+# RUN mkdir -p /vol/web/media
+# RUN mkdir -p /vol/web/static
+
+# RUN adduser -D user
+# # change the owner of the dirs.
+# RUN chown -R user:user /vol/
+# # the owner only have all priviliges (user)
+# RUN chmod -R 755 /vol/web
+# # change user
+# USER user
 
 EXPOSE 8000
 

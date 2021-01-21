@@ -3,10 +3,12 @@ import Layout from "./Layout/Layout";
 import EditQuiz from "./containers/EditQuiz";
 import LoginForm from "./containers/Login";
 import Questions from "./containers/Questions";
+import EditQuestions from "./containers/EditQuestions";
+// import ListeningQuestions from "./containers/ListeningQuestions";
 import SignupForm from "./containers/Signup";
 import WelcomePage from "./containers/Welcome";
 import QuizesTable from "./containers/QuizesTable";
-import UsersTable from "./containers/UsersTable";
+// import UsersTable from "./containers/UsersTable";
 import Users from "./containers/Users";
 import QuizCodeForm from "./containers/QuizCodeForm";
 import StartQuiz from "./containers/StartQuiz";
@@ -30,6 +32,16 @@ export default function Routes() {
               path="/teacher/quizes/:slug/questions/"
               component={Questions}
             />
+            <Route
+              exact
+              path="/teacher/quizes/:slug/questions/:id/"
+              component={EditQuestions}
+            />
+            {/* <Route
+              exact
+              path="/teacher/quizes/:slug/listening-questions/"
+              component={ListeningQuestions}
+            /> */}
             <Route exact path="/teacher/quiztaker" component={QuizTaker} />
             <Route exact path="/teacher/quizes/:slug" component={EditQuiz} />
             <Route exact path="/teacher/quizes" component={QuizesTable} />

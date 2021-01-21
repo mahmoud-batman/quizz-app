@@ -1,13 +1,13 @@
 import React, { Component } from "react";
 import {
-  Form,
+  // Form,
   Button,
   Icon,
   Header,
-  Segment,
+  // Segment,
   Container,
 } from "semantic-ui-react";
-import { Link, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import {
   createQuizTaker,
@@ -19,23 +19,23 @@ class StartQuiz extends Component {
   state = {};
 
   componentDidMount() {
-    const { slug } = this.props.match.params;
-    const { quiz } = this.props;
+    // const { slug } = this.props.match.params;
+    // const { quiz } = this.props;
     // this.props.onGetQuiz(slug);
   }
 
   handleSubmit = (id, slug) => {
     // console.log(i);
     this.props.onCreateQuizTaker(id);
-    this.props.onGetQuizQuestions(slug);
+    // this.props.onGetQuizQuestions(slug);
     return this.props.history.push(`/student/quiz/${slug}/start-quiz/`);
   };
 
   render() {
     const { isTeacher, quiz, isAuthenticated } = this.props;
-    const path = this.props.match.url;
+    // const path = this.props.match.url;
 
-    if (isTeacher == "true" || !isAuthenticated) {
+    if (isTeacher === "true" || !isAuthenticated) {
       return <Redirect to="/" />;
     }
 
@@ -77,6 +77,7 @@ class StartQuiz extends Component {
 const mapStateToProps = (state) => {
   return {
     quiz: state.QuizTakerReducer.quiz,
+    questions: state.QuizTakerReducer.questions,
     isAuthenticated: state.AuthReducer.isAuthenticated,
   };
 };

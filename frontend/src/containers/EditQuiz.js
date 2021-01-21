@@ -3,22 +3,21 @@ import {
   Form,
   Button,
   Icon,
-  Dropdown,
   Checkbox,
   Label,
   Segment,
 } from "semantic-ui-react";
-import { Link, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
-import { getQuiz, updateQuiz, deleteQuiz } from "../store/actions/teacher";
+import { updateQuiz, deleteQuiz } from "../store/actions/teacher";
 import axios from "axios";
 import { quizurl } from "../constants";
 import ModalForm from "./Modal";
 
 class EditQuiz extends Component {
-  constructor(props) {
-    super(props);
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
 
   state = {
     name: "",
@@ -44,6 +43,7 @@ class EditQuiz extends Component {
           roll_out: res.data.roll_out,
           training: res.data.training,
           subject: res.data.subject,
+          time: res.data.time,
         });
         return res.data;
       })
@@ -96,20 +96,20 @@ class EditQuiz extends Component {
   };
 
   render() {
-    const { isAuthenticated, subjects, quiz } = this.props;
+    const { isAuthenticated, quiz } = this.props;
     if (!isAuthenticated) {
       return <Redirect to={"/"} />;
     }
 
-    const options =
-      subjects &&
-      subjects.map((subject) => {
-        return {
-          key: subject.id,
-          text: subject.name,
-          value: subject.name,
-        };
-      });
+    // const options =
+    //   subjects &&
+    //   subjects.map((subject) => {
+    //     return {
+    //       key: subject.id,
+    //       text: subject.name,
+    //       value: subject.name,
+    //     };
+    //   });
 
     return (
       <Segment>

@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 
-import { Button, Container, Grid, Icon, Menu, Label } from "semantic-ui-react";
-import { Detector, Online, Offline } from "react-detect-offline";
+import { Button, Container, Grid, Icon, Menu, Image } from "semantic-ui-react";
+import { Detector } from "react-detect-offline";
 
-import { Link, Redirect, withRouter } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
-import { logout, checkAuth, online } from "../store/actions/auth";
-import { quizurl } from "../constants";
+import { logout, checkAuth } from "../store/actions/auth";
+import { quizurl, localhost } from "../constants";
 
 class Layout extends Component {
   state = {
@@ -18,6 +18,7 @@ class Layout extends Component {
 
   componentDidMount() {
     this.props.checkauth();
+    // console.log(window);
   }
 
   handleToggleDropdownMenu = () => {
@@ -44,9 +45,10 @@ class Layout extends Component {
   render() {
     const { isAuthenticated } = this.props;
     const full_name = localStorage.getItem("name");
+
     return (
       <>
-        {/* <div className="App" > */}
+        {console.log(localhost)}
         <Detector
           onChange={(_) => {
             fetch(
@@ -75,17 +77,20 @@ class Layout extends Component {
           <Menu borderless fluid inverted size="huge">
             <Container>
               <Link as="a" to="/">
-                <Menu.Item header>Quiz App</Menu.Item>
+                <Menu.Item header>
+                  <img alt="logo" src="/assets/imgs/adc-gold.png" /> &nbsp; Quiz
+                  App
+                </Menu.Item>
               </Link>
 
               {isAuthenticated && (
                 <>
                   {/* {this.state.online && this.logout()} */}
-                  <Menu.Item>
-                    <Label as="a" basic image>
-                      <img src="/assets/imgs/avatar.jpg" />
-                      {full_name}
-                    </Label>
+                  <Menu.Item position="right">
+                    <div>
+                      <Image src="/assets/imgs/avatar.jpg" avatar />
+                      <span> {full_name}</span>
+                    </div>
                   </Menu.Item>
                   <Menu.Item>
                     {/* <Detector
@@ -118,7 +123,7 @@ class Layout extends Component {
                       )}
                     /> */}
                   </Menu.Item>
-                  <Menu.Item as="a" position="right">
+                  <Menu.Item as="a">
                     <Icon
                       name="sign-out"
                       color="grey"
@@ -134,11 +139,12 @@ class Layout extends Component {
         </Grid>
         <Grid padded className="mobile only">
           <Menu borderless fluid inverted size="huge">
-            <Link as="a" to="/">
-              <Menu.Item header>Quiz App</Menu.Item>
-            </Link>
+            {/* <Link as="a" > */}
+            <Menu.Item header>
+              <img alt="logo" src="/assets/imgs/adc-gold.png" /> &nbsp; Quiz App
+            </Menu.Item>{" "}
+            {/* </Link> */}
             <Menu.Item></Menu.Item>
-
             <Menu.Menu position="right">
               <Menu.Item>
                 <Button
@@ -161,14 +167,15 @@ class Layout extends Component {
             >
               {isAuthenticated && (
                 <>
-                  {/* <Menu.Item> */}
-                  <Label as="a" basic image>
-                    <img src="/assets/imgs/avatar.jpg" />
-                    {full_name}
-                  </Label>
+                  <Menu.Item>
+                    <div>
+                      <Image src="/assets/imgs/avatar.jpg" avatar />
+                      <span> {full_name}</span>
+                    </div>
+                  </Menu.Item>
                 </>
               )}
-              <Menu.Item active as="a" href="#root">
+              {/* <Menu.Item active as="a" href="#root">
                 Home
               </Menu.Item>
               <Menu.Item as="a" href="#root">
@@ -176,7 +183,7 @@ class Layout extends Component {
               </Menu.Item>
               <Menu.Item as="a" href="#root">
                 Contact
-              </Menu.Item>
+              </Menu.Item> */}
               {isAuthenticated && (
                 <>
                   <Menu.Item>

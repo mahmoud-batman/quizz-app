@@ -101,6 +101,7 @@ class SignUp(APIView):
         if request.data["user_id"] == "":
             instance = get_user_model().objects.first()
             request.data["user_id"] = unique_integer_generator(instance)
+        print(request.data)
         serializer = UserSerializer(
             data=request.data, context={'request': request})
         if serializer.is_valid():
@@ -117,7 +118,11 @@ class SignUp(APIView):
                 return Response(json, status=status.HTTP_201_CREATED)
 
             # data : return all data # validated_data : return the only fields that validated
-        return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+        res = {"error"  : serializer.errors , "code" : "400"}
+        return Response(data=json.dumps(res))
+#  status=status.HTTP_404_NOT_FOUND
+#   status=status.HTTP_400_BAD_REQUEST
+#   status=status.HTTP_403_FORBIDDEN
 
 
 class LoginUser(APIView):

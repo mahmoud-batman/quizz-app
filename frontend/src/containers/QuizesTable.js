@@ -7,22 +7,29 @@ import {
   Button,
   Dropdown,
   Divider,
+  Loader,
+  Dimmer,
 } from "semantic-ui-react";
 
 import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { getQuizes, getSubjects, setQuiz } from "../store/actions/teacher";
-import _ from "lodash";
-import Speech from "react-speech";
+// import _ from "lodash";
 
 class QuizesTable extends Component {
   state = {
     name: "",
     subject: "",
+    loading: true,
   };
 
   componentDidMount() {
+    // let quiz = this.props.onGetQuizes();
     this.props.onGetQuizes();
+
+    // this.setState({
+    //   loading: false,
+    // });
   }
 
   handleSubmit = (e) => {
@@ -46,7 +53,7 @@ class QuizesTable extends Component {
     try {
       value = e.target.children[0].innerHTML;
     } catch (error) {
-      console.log("error");
+      // console.log("error");
       value = null;
     }
     this.setState({
@@ -57,7 +64,7 @@ class QuizesTable extends Component {
   render() {
     const { quizes, isAuthenticated, subjects } = this.props;
     const path = this.props.match.path;
-
+    // console.log(process.env);
     const options =
       subjects &&
       subjects.map((subject) => {
@@ -71,141 +78,102 @@ class QuizesTable extends Component {
     if (!isAuthenticated) {
       return <Redirect to={"/"} />;
     }
-    // const style = {
-    //   play: {
-    //     hover: {
-    //       backgroundColor: "black",
-    //       color: "white",
-    //     },
-    //     button: {
-    //       width: "28",
-    //       height: "28",
-    //       cursor: "pointer",
-    //       pointerEvents: "none",
-    //       outline: "none",
-    //       backgroundColor: "yellow",
-    //       border: "solid 1px rgba(255,255,255,1)",
-    //       borderRadius: 6,
-    //       padding: "4",
-    //       fontFamily: "Helvetica",
-    //       fontSize: "1.0em",
-    //       cursor: "pointer",
-    //       pointerEvents: "none",
-    //       outline: "none",
-    //       backgroundColor: "inherit",
-    //       border: "none",
-    //     },
-    //   },
-    // };
-
-    const style = {
-      container: {},
-      text: {},
-      buttons: {},
-      play: {
-        hover: {
-          backgroundColor: "GhostWhite",
-        },
-        button: {
-          cursor: "pointer",
-          pointerEvents: "none",
-          outline: "none",
-          backgroundColor: "Gainsboro",
-          border: "solid 1px rgba(255,255,255,1)",
-          borderRadius: 6,
-        },
-      },
-      pause: {
-        play: {},
-        hover: {},
-      },
-      stop: {
-        play: {
-          hover: {},
-          button: {},
-        },
-        resume: {
-          play: {
-            hover: {},
-            button: {},
-          },
-        },
-      },
-    };
 
     return (
       <>
-        {/* <Speech
-          styles={style}
-          textAsButton={true}
-          displayText="Hello"
-          text="I have text displayed as a button"
-        /> */}
-        <Speech
-          text="I have altered my voice"
-          voice="Google UK English Female"
-        />
-        {quizes.length != 0 ? (
-          <Table celled selectable>
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell>Name</Table.HeaderCell>
-                <Table.HeaderCell>Status</Table.HeaderCell>
-                <Table.HeaderCell>Training</Table.HeaderCell>
-                <Table.HeaderCell>Time (Min)</Table.HeaderCell>
-                <Table.HeaderCell>Questions</Table.HeaderCell>
-                <Table.HeaderCell>Code</Table.HeaderCell>
-                <Table.HeaderCell>Edit</Table.HeaderCell>
-                <Table.HeaderCell>Questions</Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
-
-            <Table.Body>
-              {quizes.map((quiz) => (
-                <Table.Row key={quiz.id}>
-                  <Table.Cell>{quiz.name}</Table.Cell>
-                  {quiz.roll_out ? (
-                    <Table.Cell positive>
-                      <Icon name="checkmark" />
-                      Approved
-                    </Table.Cell>
-                  ) : (
-                    <Table.Cell negative>
-                      <Icon name="close" />
-                      Not Approved
-                    </Table.Cell>
-                  )}
-                  {quiz.training ? (
-                    <Table.Cell warning>
-                      <Icon name="attention" />
-                      Training
-                    </Table.Cell>
-                  ) : (
-                    <Table.Cell positive>
-                      <Icon name="checkmark" />
-                      Quiz
-                    </Table.Cell>
-                  )}
-                  <Table.Cell>{quiz.time} </Table.Cell>
-                  <Table.Cell>{quiz.questions_count}</Table.Cell>
-                  <Table.Cell>{quiz.slug}</Table.Cell>
-                  <Table.Cell>
-                    <Link to={`${path}/${quiz.slug}/`}>
-                      <Button primary icon="edit" />
-                    </Link>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Link to={`${path}/${quiz.slug}/questions`}>
-                      <Button secondary icon="add" />
-                    </Link>
-                  </Table.Cell>
+        {this.props.loading && (
+          <Dimmer active>
+            <Loader active inverted inline="centered" size="large" color="red">
+              LOADING
+            </Loader>
+          </Dimmer>
+        )}
+        {quizes.length !== 0 ? (
+          <>
+            {" "}
+            <Divider horizontal>Quizes Table</Divider>
+            <Table celled selectable>
+              <Table.Header>
+                <Table.Row>
+                  <Table.HeaderCell>Name</Table.HeaderCell>
+                  <Table.HeaderCell>Status</Table.HeaderCell>
+                  <Table.HeaderCell collapsing>
+                    {" "}
+                    <Icon name="student" />
+                    Training
+                  </Table.HeaderCell>
+                  <Table.HeaderCell collapsing>
+                    <Icon name="clock" />
+                    Minutes
+                  </Table.HeaderCell>
+                  <Table.HeaderCell collapsing>
+                    {" "}
+                    <Icon name="dashboard" />
+                    Count
+                  </Table.HeaderCell>
+                  <Table.HeaderCell collapsing>
+                    <Icon name="code" />
+                    Code
+                  </Table.HeaderCell>
+                  <Table.HeaderCell collapsing>
+                    {" "}
+                    <Icon name="edit" />
+                    Edit
+                  </Table.HeaderCell>
+                  <Table.HeaderCell collapsing>Questions</Table.HeaderCell>
                 </Table.Row>
-              ))}
-            </Table.Body>
-          </Table>
+              </Table.Header>
+
+              <Table.Body>
+                {quizes.map((quiz) => (
+                  <Table.Row key={quiz.id}>
+                    <Table.Cell>{quiz.name}</Table.Cell>
+                    {quiz.roll_out ? (
+                      <Table.Cell positive>
+                        <Icon name="thumbs up" />
+                        Approved
+                      </Table.Cell>
+                    ) : (
+                      <Table.Cell negative>
+                        <Icon name="thumbs down" />
+                        Not Approved
+                      </Table.Cell>
+                    )}
+                    {quiz.training ? (
+                      <Table.Cell warning>
+                        <Icon name="lock open" />
+                        Training
+                      </Table.Cell>
+                    ) : (
+                      <Table.Cell positive>
+                        <Icon name="lock" />
+                        Quiz
+                      </Table.Cell>
+                    )}
+                    <Table.Cell>{quiz.time} </Table.Cell>
+                    <Table.Cell>{quiz.questions_count}</Table.Cell>
+                    <Table.Cell>{quiz.slug}</Table.Cell>
+                    <Table.Cell>
+                      <Link to={`${path}/${quiz.slug}/`}>
+                        <Button circular icon="write" />
+                      </Link>
+                    </Table.Cell>
+                    <Table.Cell>
+                      {/* <Link to={`${path}/${quiz.slug}/listening-questions`}>
+                    </Link> */}
+                      <Link to={`${path}/${quiz.slug}/questions`}>
+                        <Button circular secondary icon="comment alternate" />
+                      </Link>
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table>
+          </>
         ) : (
           <>
             <h3>No Quizes yet</h3>
+
             <hr />
           </>
         )}
@@ -251,6 +219,7 @@ class QuizesTable extends Component {
 const mapStateToProps = (state) => {
   return {
     quizes: state.TeacherReducer.quizes,
+    loading: state.TeacherReducer.loading,
     subjects: state.TeacherReducer.subjects,
     isAuthenticated: state.AuthReducer.isAuthenticated,
     token: state.AuthReducer.token,

@@ -18,9 +18,10 @@ class App extends Component {
       <div
         className="App"
         style={{
-            background:
+          background:
             "linear-gradient(rgba(83, 51, 237, 0.8), rgba(0,0,0, 0.8)), url('/assets/imgs/background.jpg')",
-          height: "100vh",
+          minHeight: "100vh",
+          height: "100%",
           width: "100%",
           backgroundPosition: "center",
         }}
@@ -41,4 +42,4 @@ const mapDispatchToProps = (dispatch) => {
     onCheckAuth: () => dispatch(checkAuth()),
   };
 };
-export default withRouter(connect(null, mapDispatchToProps)(App));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App));

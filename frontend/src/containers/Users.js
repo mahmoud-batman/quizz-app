@@ -1,27 +1,19 @@
 import React, { Component } from "react";
 import {
   Icon,
-  Image,
   Menu,
   Form,
   Label,
   Button,
-  // Dropdown,
-  Divider,
-  Grid,
-  // Pagination,
   Segment,
-  // Input,
-  Header,
   Sidebar,
   Tab,
-  Pagination,
 } from "semantic-ui-react";
 
-import { Link, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { getUsers, setUser } from "../store/actions/teacher";
-import _ from "lodash";
+// import _ from "lodash";
 import UsersTable from "./UsersTable";
 
 class Users extends Component {
@@ -164,7 +156,7 @@ class Users extends Component {
       },
     ];
 
-    const { activePage } = this.state;
+    // const { activePage } = this.state;
 
     const options = [
       {
@@ -185,7 +177,7 @@ class Users extends Component {
 
     return (
       <>
-        {is_staff == "true" && (
+        {is_staff === "true" && (
           <Button
             basic
             color="green"
@@ -274,7 +266,7 @@ class Users extends Component {
                 tabular: false,
                 pointing: true,
               }}
-              panes={is_staff == "false" ? [panes[0]] : panes}
+              panes={is_staff === "false" ? [panes[0]] : panes}
             />
           </Sidebar.Pusher>
           {/* <Grid verticalAlign="middle">

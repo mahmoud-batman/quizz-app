@@ -5,6 +5,7 @@ from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 from core.utils.unique_slug import unique_slug_generator
 import uuid
+import os
 
 
 class Subject(models.Model):
@@ -23,6 +24,7 @@ class Quiz(models.Model):
         'Subject', on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     questions_count = models.IntegerField(default=0)
+    # listening_questions_count = models.IntegerField(default=0)
     description = models.CharField(max_length=70, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     slug = models.SlugField(unique=True, null=True, blank=True)
@@ -44,17 +46,39 @@ def slugify_title(sender, instance, *args, **kwargs):
         instance.slug = unique_slug_generator(instance)
 
 
+def user_directory_path(instance, filename):
+    # file will be uploaded to MEDIA_ROOT/user_<id>/<filename>
+    return 'user_{0}/{1}/{2}'.format(instance.quiz.owner.user_id, instance.quiz.slug, filename.lower())
+
 class Question(models.Model):
     quiz = models.ForeignKey(
         'Quiz', on_delete=models.CASCADE, related_name='questions')
-    text = models.CharField('Question', max_length=255)
+    text = models.TextField('Question',  blank=True, default="")
+    # text = models.CharField('Question', max_length=255, blank=True, default="")
+    file = models.FileField(upload_to=user_directory_path,  null=True, blank=True)
+    time = models.IntegerField(default=0)
+    created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
     # slug = models.SlugField(unique=True, null=True, blank=True)
 
-#   order = models.IntegerField(default=0) # auto increment
+    # order = models.IntegerField(default=0) # auto increment
+    class Meta:
+        ordering = ['created', ]
+    def filename(self) :
+        return os.path.basename(self.file.name)
+    def __str__(self):
+        return '{0}{1}'.format(self.text,self.file)
+        # return self.text | self.file.name
+
+
+class ListeningQuestion(models.Model):
+    quiz = models.ForeignKey(
+        'Quiz', on_delete=models.CASCADE, related_name='listening_questions')
+    file = models.FileField(upload_to=user_directory_path)
+    # time = if is less than quiz time .
 
     def __str__(self):
-        return self.text
-
+        return '{0}'.format(self.file)
 
 class Answer(models.Model):
     question = models.ForeignKey(
@@ -91,8 +115,7 @@ class Response(models.Model):
         Answer, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        return self.question.text
-
+        return '{0}{1}'.format(self.question.text,self.question.file)
 
 @receiver(post_save, sender=Quiz)
 def set_default_quiz(sender, instance, created, **kwargs):

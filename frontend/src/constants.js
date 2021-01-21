@@ -1,5 +1,10 @@
-// const localhost = "http://192.168.8.100:8000";
-const localhost = "http://192.168.43.202:8000";
+// export const localhost = "http://192.168.8.101:8000";
+
+export const localhost = "http://192.168.43.202:8000";
+
+// export const localhost = "http://192.168.1.6:8000";
+
+// export const localhost = "http://192.168.42.229:8000";
 
 const apiURL = "/api/v1";
 

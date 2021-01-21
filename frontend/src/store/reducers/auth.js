@@ -53,7 +53,6 @@ const logout = (state, action) => {
 };
 
 const online = (state, action) => {
-  console.log(action);
   return updateObject(state, {
     online: true,
   });
@@ -65,13 +64,13 @@ const resetError = (state, action) => {
   });
 };
 
-function sleep(milliseconds) {
-  const date = Date.now();
-  let currentDate = null;
-  do {
-    currentDate = Date.now();
-  } while (currentDate - date < milliseconds);
-}
+// function sleep(milliseconds) {
+//   const date = Date.now();
+//   let currentDate = null;
+//   do {
+//     currentDate = Date.now();
+//   } while (currentDate - date < milliseconds);
+// }
 
 const reducer = (state = initialState, action) => {
   switch (action.type) {

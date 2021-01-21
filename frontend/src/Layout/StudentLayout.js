@@ -15,6 +15,7 @@ class StudentLayout extends Component {
           marginTop: "10%",
           marginLeft: "5%",
           marginRight: "5%",
+          // height: "100%",
         }}
       >
         <Container>{this.props.children}</Container>

@@ -1,7 +1,7 @@
 import axios from "axios";
 import * as actionTypes from "./actionTypes";
 import { quizurl } from "../../constants";
-import { authAxios } from "../utility";
+// import { authAxios } from "../utility";
 
 export const getQuiz = (slug) => {
   return (dispatch) => {
@@ -12,6 +12,7 @@ export const getQuiz = (slug) => {
         },
       })
       .then((res) => {
+        dispatch(getQuizQuestions(res.data.slug));
         dispatch({
           type: actionTypes.GET_QUIZ_QUIZ_TAKER,
           quiz: res.data,
@@ -46,7 +47,6 @@ export const getQuizQuestions = (slug) => {
 };
 
 export const createQuizTaker = (id) => {
-  console.log(id);
   return (dispatch) => {
     axios
       .post(
@@ -82,8 +82,28 @@ export const createResponse = (quizTakerId, questions) => {
       )
       .then((res) => {
         dispatch(getResult(quizTakerId));
+        // dispatch(getResponse(quizTakerId));
         dispatch({
           type: actionTypes.CREATE_RESPONSE,
+          response: res.data,
+        });
+        // console.log(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+};
+
+export const getResponse = (quizTakerId) => {
+  return (dispatch) => {
+    axios
+      .get(`${quizurl}/quiztaker/${quizTakerId}/response/`, {
+        headers: {
+          Authorization: `Token ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => {
+        dispatch({
+          type: actionTypes.GET_RESPONSE,
           response: res.data,
         });
         // console.log(res.data);
@@ -109,7 +129,6 @@ export const getResult = (quizTakerId) => {
           type: actionTypes.GET_RESULT,
           result: res.data.result,
         });
-        console.log(res);
       })
       .catch((err) => console.log(err));
   };

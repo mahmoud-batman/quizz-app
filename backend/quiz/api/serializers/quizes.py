@@ -51,7 +51,7 @@ class QuizSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         ''' update or put the exsiting value '''
 
-        print(validated_data)
+        print(instance)
         instance.name = validated_data.get('name', instance.name)
         instance.questions_count = validated_data.get(
             'questions_count', instance.questions_count)

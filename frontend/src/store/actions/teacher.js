@@ -1,12 +1,20 @@
 import axios from "axios";
 import * as actionTypes from "./actionTypes";
 import { quizurl, authurl } from "../../constants";
-import { authAxios } from "../utility";
+// import { authAxios } from "../utility";
+
+export const loading = () => {
+  return {
+    type: actionTypes.LOADING,
+  };
+};
 
 export const getQuizes = () => {
   return (dispatch) => {
+    dispatch(loading());
+
     axios
-      .get(`${quizurl}`, {
+      .get(`${quizurl}/`, {
         headers: {
           Authorization: `Token ${localStorage.getItem("token")}`,
         },
@@ -24,8 +32,9 @@ export const getQuizes = () => {
 
 export const getUsers = () => {
   return (dispatch) => {
+    dispatch(loading());
     axios
-      .get(`${authurl}`, {
+      .get(`${authurl}/`, {
         headers: {
           Authorization: `Token ${localStorage.getItem("token")}`,
         },
@@ -42,6 +51,7 @@ export const getUsers = () => {
 
 export const getSubjects = () => {
   return (dispatch) => {
+    // dispatch(loading());
     axios
       .get(`${quizurl}/subjects/`, {
         headers: {
@@ -61,6 +71,7 @@ export const getSubjects = () => {
 export const getQuiz = (slug) => {
   // console.log(slug);
   return (dispatch) => {
+    dispatch(loading());
     axios
       .get(`${quizurl}/${slug}/`, {
         headers: {
@@ -79,6 +90,7 @@ export const getQuiz = (slug) => {
 
 export const setQuiz = (name, subject) => {
   return (dispatch) => {
+    dispatch(loading());
     axios
       .post(
         `${quizurl}/`,
@@ -123,6 +135,7 @@ export const updateQuiz = (name, subject, roll_out, training, time, slug) => {
         }
       )
       .then((res) => {
+        dispatch(getQuizes());
         dispatch({
           type: actionTypes.UPDATE_QUIZ,
           quiz: res.data,
@@ -137,6 +150,8 @@ export const updateQuiz = (name, subject, roll_out, training, time, slug) => {
 
 export const deleteQuiz = (slug) => {
   return (dispatch) => {
+    dispatch(loading());
+
     axios
       .post(
         `${quizurl}/${slug}/delete/`,
@@ -148,7 +163,6 @@ export const deleteQuiz = (slug) => {
         }
       )
       .then((res) => {
-        console.log(res.data);
         dispatch({
           type: actionTypes.DELETE_QUIZ,
           quiz: res.data,
@@ -163,6 +177,8 @@ export const deleteQuiz = (slug) => {
 
 export const getQuestions = (slug) => {
   return (dispatch) => {
+    dispatch(loading());
+
     axios
       .get(`${quizurl}/${slug}/questions/`, {
         headers: {
@@ -178,8 +194,95 @@ export const getQuestions = (slug) => {
       .catch((error) => console.log(error));
   };
 };
+
+// export const getQuestion = (slug, id) => {
+//   return (dispatch) => {
+//     axios
+//       .get(`${quizurl}/${slug}/questions/${id}/`, {
+//         headers: {
+//           Authorization: `Token ${localStorage.getItem("token")}`,
+//         },
+//       })
+//       .then((res) => {
+//         dispatch({
+//           type: actionTypes.GET_QUESTION,
+//           question: res.data,
+//         });
+//       })
+//       .catch((error) => console.log(error));
+//   };
+// };
+
+export const editQuestion = (slug, question, answers, time, file, id) => {
+  return (dispatch) => {
+    // dispatch(loading());
+
+    const obj = {
+      text: question,
+      answers: answers,
+      time: time,
+      id: id,
+    };
+    let url = `${quizurl}/${slug}/questions/${id}/`;
+
+    let form_data = new FormData();
+
+    // if (file.size > 0) {
+    //   form_data.append("file", file, file.name);
+    // } else if (file.name == "delete") {
+    //   form_data.append("file", file.name);
+    // } else {
+    //   form_data.append("file", file.name);
+    // }
+
+    if (file.size > 0) {
+      form_data.append("file", file, file.name);
+    } else {
+      form_data.append("file", file.name);
+    }
+
+    let _question = JSON.stringify(obj);
+    form_data.append("question", _question);
+    axios
+      .post(url, form_data, {
+        headers: {
+          "content-type": "multipart/form-data",
+          Authorization: `Token ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => {
+        dispatch({
+          type: actionTypes.EDIT_QUESTION,
+          question: res.data,
+        });
+        // dispatch(getQuestions(slug));
+      })
+      .catch((error) => console.log(error));
+  };
+};
+
+export const getListeningQuestions = (slug) => {
+  return (dispatch) => {
+    axios
+      .get(`${quizurl}/${slug}/listening-questions/`, {
+        headers: {
+          Authorization: `Token ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => {
+        dispatch({
+          type: actionTypes.GET_LISTENING_QUESTIONS,
+          questions: res.data,
+        });
+      })
+      .catch((error) => console.log(error));
+  };
+};
+
 export const deleteQuestion = (slug, id) => {
   return (dispatch) => {
+    dispatch(loading());
+
     axios
       .post(
         `${quizurl}/${slug}/questions/${id}/delete/`,
@@ -200,18 +303,34 @@ export const deleteQuestion = (slug, id) => {
   };
 };
 
-export const addQuestion = (slug, question, answers) => {
+export const addQuestion = (slug, question, answers, time, file) => {
   return (dispatch) => {
+    dispatch(loading());
+
+    const obj = {
+      text: question,
+      answers: answers,
+      time: time,
+    };
+
+    let form_data = new FormData();
+    if (file != null) {
+      form_data.append("file", file, file.name);
+    } else {
+      form_data.append("file", null);
+    }
+
+    let _question = JSON.stringify(obj);
+    form_data.append("question", _question);
+
+    let url = `${quizurl}/${slug}/questions/`;
     axios
-      .post(
-        `${quizurl}/${slug}/questions/`,
-        { text: question, answers: answers },
-        {
-          headers: {
-            Authorization: `Token ${localStorage.getItem("token")}`,
-          },
-        }
-      )
+      .post(url, form_data, {
+        headers: {
+          "content-type": "multipart/form-data",
+          Authorization: `Token ${localStorage.getItem("token")}`,
+        },
+      })
       .then((res) => {
         dispatch({
           type: actionTypes.ADD_QUESTIONS,
@@ -219,6 +338,51 @@ export const addQuestion = (slug, question, answers) => {
         });
       })
       .catch((error) => console.log(error));
+  };
+};
+
+// export const addQuestion = (slug, question, answers) => {
+//   return (dispatch) => {
+//     axios
+//       .post(
+//         `${quizurl}/${slug}/questions/`,
+//         { text: question, answers: answers },
+//         {
+//           headers: {
+//             Authorization: `Token ${localStorage.getItem("token")}`,
+//           },
+//         }
+//       )
+//       .then((res) => {
+//         dispatch({
+//           type: actionTypes.ADD_QUESTIONS,
+//           question: res.data,
+//         });
+//       })
+//       .catch((error) => console.log(error));
+//   };
+// };
+
+export const addListeningQuestion = (slug, file) => {
+  return (dispatch) => {
+    // cosnt blob = new Blob()
+    let from_data = new FormData();
+    from_data.append("file", file, file.name);
+    let url = `${quizurl}/${slug}/listening-questions/`;
+    axios
+      .post(url, from_data, {
+        headers: {
+          "content-type": "multipart/form-data",
+          Authorization: `Token ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => {
+        dispatch({
+          type: actionTypes.ADD_LISTENING_QUESTION,
+          question: res.data,
+        });
+      })
+      .catch((err) => console.log(err));
   };
 };
 
@@ -263,7 +427,6 @@ export const setUser = (
   user_id,
   is_teacher
 ) => {
-  console.log(first_name, second_name, user_id, password, is_teacher);
   return (dispatch) => {
     // dispatch(loading());
     axios
@@ -333,7 +496,6 @@ export const deleteQuizTaker = (slug, quizTaker_id) => {
         },
       })
       .then((res) => {
-        console.log(res);
         dispatch({
           type: actionTypes.DELETE_QUIZTAKER,
           quizTaker: res.data,

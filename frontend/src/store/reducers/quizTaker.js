@@ -2,7 +2,7 @@ import { updateObject } from "../utility";
 import * as actionTypes from "../actions/actionTypes";
 
 const initialState = {
-  //   quizes: [],
+  // quizes: [],
   questions: [],
   quizTaker: {},
   quiz: {},
@@ -17,6 +17,7 @@ const getQuiz = (state, action) => {
   });
 };
 const getQuizQuestions = (state, action) => {
+  // console
   return updateObject(state, {
     questions: action.questions,
     // loading: true,
@@ -32,9 +33,15 @@ const quizTaker = (state, action) => {
 const createResponse = (state, action) => {
   return updateObject(state, {
     result: "",
-    response: action.questions,
+    response: action.response,
   });
 };
+
+// const getResponse = (state, action) => {
+//   return updateObject(state, {
+//     response: action.response,
+//   });
+// };
 
 const result = (state, action) => {
   return updateObject(state, {
@@ -52,6 +59,8 @@ const reducer = (state = initialState, action) => {
       return getQuizQuestions(state, action);
     case actionTypes.CREATE_RESPONSE:
       return createResponse(state, action);
+    // case actionTypes.GET_RESPONSE:
+    //   return getResponse(state, action);
     case actionTypes.GET_RESULT:
       return result(state, action);
     default:

@@ -16,7 +16,7 @@ import {
   getQuiz,
   deleteQuizTaker,
 } from "../store/actions/teacher";
-import _ from "lodash";
+// import _ from "lodash";
 import ModalForm from "./Modal";
 import ReactToPrint from "react-to-print";
 
@@ -83,14 +83,14 @@ class QuizTaker extends Component {
             <Button
               icon="search"
               onClick={this.handleSubmit}
-              disabled={this.state.code == ""}
+              disabled={this.state.code === ""}
             />
           </Form.Field>
         </Form>
 
         <Divider horizontal>Quiz Taker List</Divider>
 
-        {quiztakers.length != 0 ? (
+        {quiztakers.length !== 0 ? (
           <>
             <ReactToPrint
               trigger={() => (

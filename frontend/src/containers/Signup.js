@@ -10,7 +10,7 @@ import {
 } from "semantic-ui-react";
 import { Link, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
-import { authSignup, resetError } from "../store/actions";
+import { authSignup } from "../store/actions";
 // import { setUser } from "../store/actions/teacher";
 // import { authSignup } from "../store/actions/auth";
 
@@ -80,7 +80,7 @@ class SignupForm extends Component {
 
   render() {
     const { error, loading, isAuthenticated } = this.props;
-    console.log(error);
+
     if (isAuthenticated) {
       return <Redirect to={"/"} />;
     }

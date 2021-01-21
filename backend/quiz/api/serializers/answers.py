@@ -9,6 +9,9 @@ class AnswerSerializer(serializers.ModelSerializer):
         read_only_field = ['id', ]
 
     def update(self, instance, validated_data):
+        print(validated_data )
+        print(instance )
+        # print(instance.get("text"))
         instance.text = validated_data.get("text", instance.text)
         instance.save()
         return instance

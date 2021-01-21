@@ -9,7 +9,7 @@ services:
       - POSTGRES_PASSWORD=postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
+#    restart: unless-stopped
 
   backend:
     container_name: backend
@@ -25,9 +25,10 @@ services:
       - 8000:8000
     env_file:
       - ./backend/.env.dev
-    restart: unless-stopped
+#    restart: unless-stopped
     depends_on:
       - db
+# ip a | grep 192.168
 
   frontend:
     container_name: frontend
@@ -40,7 +41,7 @@ services:
       - "/app/frontend/node_modules"
     ports:
       - 3000:3000
-    restart: unless-stopped
+#    restart: unless-stopped
 
     stdin_open: true
     tty: true

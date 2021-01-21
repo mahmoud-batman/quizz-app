@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import { Layout, Menu, Breadcrumb } from "antd";
+import { Layout, Menu } from "antd";
 import {
-  DesktopOutlined,
-  PieChartOutlined,
+  // DesktopOutlined,
+  // PieChartOutlined,
   FileOutlined,
   TeamOutlined,
-  UserOutlined,
+  // UserOutlined,
 } from "@ant-design/icons";
 // import TableExamplePadded from "./QuizesTable";
 import { connect } from "react-redux";
@@ -13,8 +13,8 @@ import { Link, Redirect, withRouter } from "react-router-dom";
 // import SiderDemo from "./containers/TeacherAdmin";
 // import QuizCodeForm from "./containers/QuizCodeForm";
 
-const { Header, Content, Footer, Sider } = Layout;
-const { SubMenu } = Menu;
+const { Content, Footer, Sider } = Layout;
+// const { SubMenu } = Menu;
 
 class TeacherAdmin extends Component {
   state = {
@@ -27,11 +27,11 @@ class TeacherAdmin extends Component {
 
   render() {
     const { collapsed } = this.state;
-    const { isTeacher, isAuthenticated } = this.props;
+    const { isAuthenticated } = this.props;
     const path = this.props.match.path;
 
     const is_Teacher = localStorage.getItem("is_teacher");
-    const is_staff = localStorage.getItem("is_staff");
+    // const is_staff = localStorage.getItem("is_staff");
 
     if (!is_Teacher || !isAuthenticated) {
       return <Redirect to="/" />;
@@ -47,7 +47,7 @@ class TeacherAdmin extends Component {
         >
           <div className="logo" />
           <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-            {is_Teacher == "true" && (
+            {is_Teacher === "true" && (
               <>
                 <Menu.Item key="1" icon={<FileOutlined />}>
                   <Link to={`${path}/quizes/`}>Quizes</Link>
@@ -98,7 +98,8 @@ class TeacherAdmin extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    loading: state.AuthReducer.loading,
+    // loading: state.AuthReducer.loading,
+    // loading: state.TeacherReducer.loading,
     error: state.AuthReducer.error,
     isAuthenticated: state.AuthReducer.isAuthenticated,
     isTeacher: state.AuthReducer.isTeacher,

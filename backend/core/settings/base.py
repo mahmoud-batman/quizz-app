@@ -153,3 +153,5 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 #     'http://192.168.1.5:3000'
 # )
 CORS_ORIGIN_ALLOW_ALL = True
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

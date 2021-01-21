@@ -63,11 +63,13 @@ class GetResult(APIView):
         pk = self.kwargs["pk"]
         quiztaker = QuizTakers.objects.filter(pk=pk).first()
         quiz = quiztaker.quiz
+
         quiztaker_responses = quiztaker.responses.all()
         quiz_questions = quiz.questions.all()
+
         for response, question in zip(quiztaker_responses, quiz_questions):
-            print(response, question)
-            if(response):
+
+            if(response.question == question):
                 for answer in question.answers.all():
                     if response.answer == answer and answer.is_correct:
                         result += 1
@@ -75,7 +77,6 @@ class GetResult(APIView):
         quiztaker.correct_answers = result
         quiztaker.completed = True
         quiztaker.save()
-        print(quiztaker)
         return Response({"result": quiztaker.correct_answers})
 
 
